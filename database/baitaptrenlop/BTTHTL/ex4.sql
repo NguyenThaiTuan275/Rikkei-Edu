@@ -1,7 +1,9 @@
 USE btth_qlct;
 
 -- 1. Hiển thị thù lao trung bình của từng kiến trúc sư
-SELECT a.name AS architect_name, AVG(d.benefit) AS average_benefit
+SELECT 
+	a.name AS architect_name, 
+    AVG(d.benefit) AS average_benefit
 FROM architect a
 JOIN design d ON a.id = d.architect_id
 GROUP BY a.id;
