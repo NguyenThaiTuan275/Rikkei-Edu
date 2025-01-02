@@ -1,180 +1,177 @@
 "use strict";
-// 1. Class Person
-// Lớp đại diện cho một người với các thuộc tính cơ bản như id và tên
+// Lớp Person (Người)
 class Person {
-    constructor(id, // Mã định danh duy nhất của người
-    name // Tên của người
-    ) {
+    constructor(id, name) {
         this.id = id;
         this.name = name;
     }
-    // Phương thức trả về tên của người
     getName() {
         return this.name;
     }
 }
-// 2. Class Employee
-// Lớp đại diện cho nhân viên, kế thừa từ Person
+// Lớp Employee (Nhân viên) kế thừa từ Person
 class Employee extends Person {
-    constructor(id, name, role // Vai trò của nhân viên
-    ) {
-        super(id, name); // Gọi hàm khởi tạo của lớp cha
+    constructor(id, name, role) {
+        super(id, name);
         this.role = role;
     }
-    // Phương thức trả về vai trò của nhân viên
     getRole() {
         return this.role;
     }
 }
-// 3. Class Manager
-// Lớp đại diện cho người quản lý, kế thừa từ Employee
+// Lớp Manager (Quản lý) kế thừa từ Employee
 class Manager extends Employee {
-    constructor(id, name, role, department // Bộ phận mà quản lý phụ trách
-    ) {
-        super(id, name, role); // Gọi hàm khởi tạo của lớp cha
+    constructor(id, name, role, department) {
+        super(id, name, role);
         this.department = department;
     }
-    // Phương thức trả về bộ phận của quản lý
     getDepartment() {
         return this.department;
     }
 }
-// 4. Class Task
-// Lớp đại diện cho công việc
+// Lớp Task (Công việc)
 class Task {
-    constructor(id, // Mã định danh duy nhất của công việc
-    title, // Tên công việc
-    deadline // Ngày hạn hoàn thành công việc
-    ) {
+    constructor(id, title, deadline) {
         this.id = id;
         this.title = title;
         this.deadline = deadline;
-        this.isCompleted = false; // Trạng thái hoàn thành của công việc (mặc định là chưa hoàn thành)
+        this.isCompleted = false;
     }
-    // Đánh dấu công việc là đã hoàn thành
     complete() {
         this.isCompleted = true;
+        console.log(`Task [ID: ${this.id}] is completed.`);
     }
-    // Lấy thông tin chi tiết về công việc
     getDetails() {
-        return `Task ID: ${this.id}, Title: ${this.title}, Deadline: ${this.deadline.toDateString()}, Completed: ${this.isCompleted}`;
+        return `Task [ID: ${this.id}, Title: ${this.title}, Deadline: ${this.deadline.toLocaleDateString()}, Completed: ${this.isCompleted}]`;
     }
 }
-// 5. Class Assignment
-// Lớp đại diện cho việc phân công công việc
+// Lớp Assignment (Phân công công việc)
 class Assignment {
-    constructor(employee, // Nhân viên được phân công
-    task // Công việc được phân công
-    ) {
+    constructor(employee, task) {
         this.employee = employee;
         this.task = task;
     }
-    // Lấy thông tin chi tiết về việc phân công
     getAssignmentDetails() {
-        return `Employee: ${this.employee.getName()} (${this.employee.getRole()}), Task: ${this.task.getDetails()}`;
+        return `${this.employee.getName()} is assigned to task: ${this.task.getDetails()}`;
     }
 }
-// 6. Class TaskManager
-// Lớp quản lý tổng thể các nhân viên, công việc và phân công
+// Lớp TaskManager (Quản lý công việc)
 class TaskManager {
     constructor() {
-        this.employees = []; // Danh sách nhân viên
-        this.managers = []; // Danh sách người quản lý
-        this.tasks = []; // Danh sách công việc
-        this.assignments = []; // Danh sách phân công công việc
+        this.employees = [];
+        this.managers = [];
+        this.tasks = [];
+        this.assignments = [];
     }
-    // Thêm một nhân viên mới vào danh sách
     addEmployee(name, role) {
         const id = this.employees.length + 1;
-        this.employees.push(new Employee(id, name, role));
+        const employee = new Employee(id, name, role);
+        this.employees.push(employee);
+        console.log(`Employee [ID: ${id}] added.`);
     }
-    // Thêm một người quản lý mới vào danh sách
     addManager(name, role, department) {
         const id = this.managers.length + 1;
-        this.managers.push(new Manager(id, name, role, department));
+        const manager = new Manager(id, name, role, department);
+        this.managers.push(manager);
+        console.log(`Manager [ID: ${id}] added.`);
     }
-    // Thêm một công việc mới vào danh sách
     addTask(title, deadline) {
         const id = this.tasks.length + 1;
-        this.tasks.push(new Task(id, title, new Date(deadline)));
+        const task = new Task(id, title, new Date(deadline));
+        this.tasks.push(task);
+        console.log(`Task [ID: ${id}] added.`);
     }
-    // Phân công một công việc cho một nhân viên
     assignTask(employeeId, taskId) {
-        const employee = this.employees.find(e => e['id'] === employeeId);
-        const task = this.tasks.find(t => t['id'] === taskId);
-        if (!employee) {
-            console.error("Employee not found."); // Báo lỗi nếu không tìm thấy nhân viên
+        const employee = this.employees.find(e => e.id === employeeId);
+        const task = this.tasks.find(t => t.id === taskId);
+        if (!employee || !task) {
+            console.log("Error: Employee or Task not found.");
             return;
         }
-        if (!task) {
-            console.error("Task not found."); // Báo lỗi nếu không tìm thấy công việc
+        if (task.isCompleted) {
+            console.log("Error: Task is already completed.");
             return;
         }
-        this.assignments.push(new Assignment(employee, task));
+        const assignment = new Assignment(employee, task);
+        this.assignments.push(assignment);
+        console.log(`Task [ID: ${taskId}] assigned to Employee [ID: ${employeeId}].`);
     }
-    // Đánh dấu một công việc là đã hoàn thành
     completeTask(taskId) {
-        const task = this.tasks.find(t => t['id'] === taskId);
+        const task = this.tasks.find(t => t.id === taskId);
         if (!task) {
-            console.error("Task not found."); // Báo lỗi nếu không tìm thấy công việc
+            console.log("Error: Task not found.");
             return;
         }
         task.complete();
     }
-    // Hiển thị danh sách phân công công việc
     listAssignments() {
+        console.log("Assignments:");
         this.assignments.forEach(assignment => {
             console.log(assignment.getAssignmentDetails());
         });
     }
 }
-// 7. Main Program
-// Giao diện dòng lệnh để người dùng tương tác
-const taskManager = new TaskManager();
-let isRunning = true;
-while (isRunning) {
-    console.log("\nMenu:");
-    console.log("1. Add Employee");
-    console.log("2. Add Manager");
-    console.log("3. Add Task");
-    console.log("4. Assign Task");
-    console.log("5. Complete Task");
-    console.log("6. List Assignments");
-    console.log("7. Exit");
-    const choice = parseInt(prompt("Choose an option:") || "0", 10);
-    switch (choice) {
-        case 1:
-            const empName = prompt("Enter employee name:") || "";
-            const empRole = prompt("Enter employee role:") || "";
-            taskManager.addEmployee(empName, empRole);
-            break;
-        case 2:
-            const mgrName = prompt("Enter manager name:") || "";
-            const mgrRole = prompt("Enter manager role:") || "";
-            const dept = prompt("Enter department:") || "";
-            taskManager.addManager(mgrName, mgrRole, dept);
-            break;
-        case 3:
-            const taskTitle = prompt("Enter task title:") || "";
-            const taskDeadline = prompt("Enter task deadline (YYYY-MM-DD):") || "";
-            taskManager.addTask(taskTitle, taskDeadline);
-            break;
-        case 4:
-            const empId = parseInt(prompt("Enter employee ID:") || "0", 10);
-            const taskId = parseInt(prompt("Enter task ID:") || "0", 10);
-            taskManager.assignTask(empId, taskId);
-            break;
-        case 5:
-            const compTaskId = parseInt(prompt("Enter task ID to complete:") || "0", 10);
-            taskManager.completeTask(compTaskId);
-            break;
-        case 6:
-            taskManager.listAssignments();
-            break;
-        case 7:
-            isRunning = false;
-            break;
-        default:
-            console.error("Invalid choice. Please try again.");
+// Lớp Main (Chương trình chính)
+class Main {
+    constructor() {
+        this.taskManager = new TaskManager();
+    }
+    run() {
+        while (true) {
+            console.log(`
+Menu:
+1. Add Employee
+2. Add Manager
+3. Add Task
+4. Assign Task to Employee
+5. Mark Task as Completed
+6. List Assignments
+7. Exit
+            `);
+            const choice = Number(prompt("Enter your choice: "));
+            try {
+                switch (choice) {
+                    case 1:
+                        const employeeName = prompt("Enter employee name: ");
+                        const employeeRole = prompt("Enter employee role: ");
+                        this.taskManager.addEmployee(employeeName, employeeRole);
+                        break;
+                    case 2:
+                        const managerName = prompt("Enter manager name: ");
+                        const managerRole = prompt("Enter manager role: ");
+                        const department = prompt("Enter manager department: ");
+                        this.taskManager.addManager(managerName, managerRole, department);
+                        break;
+                    case 3:
+                        const taskTitle = prompt("Enter task title: ");
+                        const taskDeadline = prompt("Enter task deadline (YYYY-MM-DD): ");
+                        this.taskManager.addTask(taskTitle, taskDeadline);
+                        break;
+                    case 4:
+                        const employeeId = Number(prompt("Enter employee ID: "));
+                        const taskId = Number(prompt("Enter task ID: "));
+                        this.taskManager.assignTask(employeeId, taskId);
+                        break;
+                    case 5:
+                        const taskIdToComplete = Number(prompt("Enter task ID to complete: "));
+                        this.taskManager.completeTask(taskIdToComplete);
+                        break;
+                    case 6:
+                        this.taskManager.listAssignments();
+                        break;
+                    case 7:
+                        console.log("Exiting...");
+                        return;
+                    default:
+                        console.log("Invalid choice. Please try again.");
+                }
+            }
+            catch (error) {
+                console.error(error.message);
+            }
+        }
     }
 }
+// Khởi tạo và chạy ứng dụng
+const app = new Main();
+app.run();
